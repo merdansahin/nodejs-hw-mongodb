@@ -19,7 +19,8 @@
     "http-errors": "^2.0.1",
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.2",
-    "pino-http": "^11.0.0"
+    "pino-http": "^11.0.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "eslint": "^9.39.2",
