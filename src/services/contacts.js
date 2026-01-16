@@ -10,6 +10,7 @@ export async function getContacts({
   const limit = Number(perPage) || 10;
   const skip = (Number(page) - 1) * limit;
 
+  const query = { userId, ...filter };
   const sort = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
 
   const totalItems = await Contact.countDocuments(filter);
