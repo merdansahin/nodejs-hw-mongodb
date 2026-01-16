@@ -6,6 +6,7 @@ import {
   patchContact,
   deleteContact,
 } from '../services/contacts.js';
+import { uploadToCloudinary } from '../utils/cloudinary.js';
 
 export const getContactsController = async (req, res) => {
   const {
@@ -51,12 +52,14 @@ export const getContactByIdController = async (req, res) => {
   });
 };
 export const createContactController = async (req, res) => {
+  const photo = await uploadToCloudinary(req.file);
+  const payload = { ...req.body, ...(photo ? { photo } : {}) };
+  const newContact = await createContact(payload);
+
   const { name, phoneNumber, contactType } = req.body;
   if (!name || !phoneNumber || !contactType) {
     throw createHttpError(400, 'Missing required fields');
   }
-
-  const newContact = await createContact(req.body);
 
   res.status(201).json({
     status: 201,
@@ -67,8 +70,10 @@ export const createContactController = async (req, res) => {
 
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
+  const photo = await uploadToCloudinary(req.file);
+  const payload = { ...req.body, ...(photo ? { photo } : {}) };
+  const updated = await patchContact(contactId, payload);
 
-  const updated = await patchContact(contactId, req.body);
   if (!updated) {
     throw createHttpError(404, 'Contact not found');
   }

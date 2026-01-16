@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import createHttpError from 'http-errors';
-
+import jwt from 'jsonwebtoken';
 import { User } from '../db/models/user.js';
 import { Session } from '../db/models/session.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 const ACCESS_TTL_MIN = Number(process.env.ACCESS_TOKEN_TTL_MIN || 15);
 const REFRESH_TTL_DAYS = Number(process.env.REFRESH_TOKEN_TTL_DAYS || 30);
@@ -84,3 +85,41 @@ export const logoutSession = async (refreshToken) => {
   if (!refreshToken) return;
   await Session.deleteOne({ refreshToken });
 };
+export async function sendResetPasswordEmail(email) {
+  const user = await UsersCollection.findOne({ email });
+  if (!user) throw createHttpError(404, 'User not found!');
+
+  const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+    expiresIn: '5m',
+  });
+
+  const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
+
+  await sendEmail({
+    to: email,
+    subject: 'Reset password',
+    html: `<p>Şifrenizi sıfırlamak için link:</p><a href="${resetLink}">${resetLink}</a>`,
+  });
+
+  return true;
+}
+
+export async function resetPasswordByToken(token, newPassword) {
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await UsersCollection.findOne({ email: payload.email });
+  if (!user) throw createHttpError(404, 'User not found!');
+
+  const hash = await bcrypt.hash(newPassword, 10);
+  await UsersCollection.updateOne({ _id: user._id }, { password: hash });
+
+  // tüm session'ları sil (accept kriteri: "mevcut oturumu sil")
+  await SessionsCollection.deleteMany({ userId: user._id });
+
+  return true;
+}

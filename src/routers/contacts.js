@@ -3,6 +3,7 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
+import { upload } from '../middlewares/upload.js';
 import {
   getContactsController,
   getContactByIdController,
@@ -29,6 +30,13 @@ router.patch(
   '/:contactId',
   isValidId,
   validateBody(patchContactSchema),
+  ctrlWrapper(patchContactController)
+);
+router.post('/', upload.single('photo'), ctrlWrapper(createContactController));
+
+router.patch(
+  '/:contactId',
+  upload.single('photo'),
   ctrlWrapper(patchContactController)
 );
 router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));

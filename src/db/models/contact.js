@@ -6,6 +6,7 @@ const contactSchema = new Schema(
     phoneNumber: { type: String, required: true },
     email: { type: String },
     isFavourite: { type: Boolean, default: false },
+    photo: { type: String, default: null },
     contactType: {
       type: String,
       enum: ['work', 'home', 'personal'],
