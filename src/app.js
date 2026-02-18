@@ -20,6 +20,12 @@ app.use('/auth', authRouter);
 app.use('/contacts', contactsRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.get('/', (req, res) => {
+  res.json({
+    message: 'API is running 🚀',
+  });
+});
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 
