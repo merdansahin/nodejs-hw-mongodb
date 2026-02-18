@@ -1,0 +1,46 @@
+tags:
+  - Contacts
+summary: Create new contact
+operationId: createContact
+
+security:
+  - bearerAuth: []
+
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - phoneNumber
+        properties:
+          name:
+            type: string
+            example: 'John Doe'
+          email:
+            type: string
+            format: email
+            example: 'john.doe@example.com'
+          phoneNumber:
+            type: string
+            example: '+380123456789'
+          isFavourite:
+            type: boolean
+            default: false
+          contactType:
+            type: string
+            enum: ['work', 'home', 'personal']
+            default: 'personal'
+responses:
+  '201':
+    description: Contact created
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/contact.yaml'
+  '401':
+    $ref: '../../components/schemas/responses/unauthorized.yaml'
+  '400':
+    description: Bad Request - Validation error

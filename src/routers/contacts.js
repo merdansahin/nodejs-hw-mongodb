@@ -23,20 +23,15 @@ router.get('/', ctrlWrapper(getContactsController));
 router.get('/:contactId', isValidId, ctrlWrapper(getContactByIdController));
 router.post(
   '/',
+  upload.single('photo'),
   validateBody(createContactSchema),
   ctrlWrapper(createContactController)
 );
 router.patch(
   '/:contactId',
   isValidId,
-  validateBody(patchContactSchema),
-  ctrlWrapper(patchContactController)
-);
-router.post('/', upload.single('photo'), ctrlWrapper(createContactController));
-
-router.patch(
-  '/:contactId',
   upload.single('photo'),
+  validateBody(patchContactSchema),
   ctrlWrapper(patchContactController)
 );
 router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));

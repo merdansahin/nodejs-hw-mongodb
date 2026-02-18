@@ -1,0 +1,13 @@
+tags:
+  - Auth
+
+summary: Refresh access token
+operationId: refreshToken
+
+security: []
+
+responses:
+  '200':
+    description: Token refreshed
+  '401':
+    description: Invalid refresh token

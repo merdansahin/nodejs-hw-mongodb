@@ -1,0 +1,14 @@
+tags:
+  - Auth
+
+summary: Logout user
+operationId: logoutUser
+
+security:
+  - bearerAuth: []
+
+responses:
+  '204':
+    description: Logout successful
+  '401':
+    description: Unauthorized

@@ -1,0 +1,30 @@
+tags:
+  - Auth
+
+summary: Register new user
+operationId: registerUser
+
+security: []
+
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            example: test@mail.com
+          password:
+            type: string
+            example: '123456'
+
+responses:
+  '201':
+    description: User registered successfully
+  '400':
+    description: Validation error
